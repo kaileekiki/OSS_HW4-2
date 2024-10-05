@@ -2,73 +2,43 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from "react"
 import TutorialDataService from "../services/TutorialService";
 import { useTable } from "react-table";
 
-const TutorialsList = (props) => {
-  const [tutorials, setTutorials] = useState([]);
-  const [searchTitle, setSearchTitle] = useState("");
-  const tutorialsRef = useRef();
+const PeopleList = (props) => {
+  const [people, setPeople] = useState([]);
+  const [searchName, setSearchName] = useState("");
+  const peopleRef = useRef();
 
-  tutorialsRef.current = tutorials;
+  peopleRef.current = people;
 
   useEffect(() => {
-    retrieveTutorials();
+    retrievePeople();
   }, []);
 
-  const onChangeSearchTitle = (e) => {
-    const searchTitle = e.target.value;
-    setSearchTitle(searchTitle);
+  const onChangeSearchName = (e) => {
+    const searchName = e.target.value;
+    setSearchName(searchName);
   };
 
-  const retrieveTutorials = () => {
+  const retrievePeople = useCallback(() => {
     TutorialDataService.getAll()
       .then((response) => {
-        setTutorials(response.data);
+        setPeople(response.data);
       })
       .catch((e) => {
         console.log(e);
       });
-  };
+  }, []);
 
-  const refreshList = () => {
-    retrieveTutorials();
-  };
-
-  const removeAllTutorials = () => {
-    TutorialDataService.removeAll()
-      .then((response) => {
-        console.log(response.data);
-        refreshList();
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const findByTitle = () => {
-    TutorialDataService.findByTitle(searchTitle)
-      .then((response) => {
-        setTutorials(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  const openTutorial = useCallback((rowIndex) => {
-    const id = tutorialsRef.current[rowIndex].id;
-    props.history.push("/tutorials/" + id);
-  }, [props.history]);
-
-  const deleteTutorial = useCallback((rowIndex) => {
-    const id = tutorialsRef.current[rowIndex].id;
+  const deletePerson = useCallback((rowIndex) => {
+    const id = peopleRef.current[rowIndex].id;
 
     TutorialDataService.remove(id)
       .then((response) => {
-        props.history.push("/tutorials");
+        props.history.push("/people");
 
-        let newTutorials = [...tutorialsRef.current];
-        newTutorials.splice(rowIndex, 1);
+        let newPeople = [...peopleRef.current];
+        newPeople.splice(rowIndex, 1);
 
-        setTutorials(newTutorials);
+        setPeople(newPeople);
       })
       .catch((e) => {
         console.log(e);
@@ -78,19 +48,35 @@ const TutorialsList = (props) => {
   const columns = useMemo(
     () => [
       {
-        Header: "Title",
-        accessor: "title",
+        Header: "Name",
+        accessor: "name",
       },
       {
-        Header: "Description",
-        accessor: "description",
+        Header: "Job",
+        accessor: "job",
       },
       {
-        Header: "Status",
-        accessor: "published",
+        Header: "Job Description",
+        accessor: "jobDescription",
+      },
+      {
+        Header: "Gender",
+        accessor: "gender",
         Cell: (props) => {
-          return props.value ? "Published" : "Pending";
+          return props.value ? "Male" : "Female";
         },
+      },
+      {
+        Header: "Height",
+        accessor: "height",
+      },
+      {
+        Header: "Weight",
+        accessor: "weight",
+      },
+      {
+        Header: "Age",
+        accessor: "age",
       },
       {
         Header: "Actions",
@@ -99,11 +85,11 @@ const TutorialsList = (props) => {
           const rowIdx = props.row.id;
           return (
             <div>
-              <span onClick={() => openTutorial(rowIdx)}>
+              <span onClick={() => props.history.push(`/people/${peopleRef.current[rowIdx].id}`)}>
                 <i className="far fa-edit action mr-2"></i>
               </span>
 
-              <span onClick={() => deleteTutorial(rowIdx)}>
+              <span onClick={() => deletePerson(rowIdx)}>
                 <i className="fas fa-trash action"></i>
               </span>
             </div>
@@ -111,7 +97,7 @@ const TutorialsList = (props) => {
         },
       },
     ],
-    [openTutorial, deleteTutorial]
+    [deletePerson, props.history]
   );
 
   const {
@@ -122,7 +108,7 @@ const TutorialsList = (props) => {
     prepareRow,
   } = useTable({
     columns,
-    data: tutorials,
+    data: people,
   });
 
   return (
@@ -132,15 +118,15 @@ const TutorialsList = (props) => {
           <input
             type="text"
             className="form-control"
-            placeholder="Search by title"
-            value={searchTitle}
-            onChange={onChangeSearchTitle}
+            placeholder="Search by name"
+            value={searchName}
+            onChange={onChangeSearchName}
           />
           <div className="input-group-append">
             <button
               className="btn btn-outline-secondary"
               type="button"
-              onClick={findByTitle}
+              onClick={() => TutorialDataService.findByName(searchName).then((response) => setPeople(response.data))}
             >
               Search
             </button>
@@ -164,7 +150,7 @@ const TutorialsList = (props) => {
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
+            {rows.map((row) => {
               prepareRow(row);
               return (
                 <tr {...row.getRowProps()}>
@@ -181,7 +167,7 @@ const TutorialsList = (props) => {
       </div>
 
       <div className="col-md-8">
-        <button className="btn btn-sm btn-danger" onClick={removeAllTutorials}>
+        <button className="btn btn-sm btn-danger" onClick={() => TutorialDataService.removeAll().then(retrievePeople)}>
           Remove All
         </button>
       </div>
@@ -189,4 +175,4 @@ const TutorialsList = (props) => {
   );
 };
 
-export default TutorialsList;
+export default PeopleList;

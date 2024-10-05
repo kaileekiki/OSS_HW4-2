@@ -1,71 +1,56 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import TutorialDataService from "../services/TutorialService";
 
-const Tutorial = props => {
-  const initialTutorialState = {
+const Person = props => {
+  const initialPersonState = {
     id: null,
-    title: "",
-    description: "",
-    published: false
+    name: "",
+    job: "",
+    jobDescription: "",
+    gender: false,
+    height: 0,
+    weight: 0,
+    age: 0,
   };
-  const [currentTutorial, setCurrentTutorial] = useState(initialTutorialState);
+  const [currentPerson, setCurrentPerson] = useState(initialPersonState);
   const [message, setMessage] = useState("");
 
-  const getTutorial = id => {
+  const getPerson = useCallback(id => {
     TutorialDataService.get(id)
       .then(response => {
-        setCurrentTutorial(response.data);
+        setCurrentPerson(response.data);
         console.log(response.data);
       })
       .catch(e => {
         console.log(e);
       });
-  };
+  }, []);
 
   useEffect(() => {
-    getTutorial(props.match.params.id);
-  }, [props.match.params.id]);
+    getPerson(props.match.params.id);
+  }, [props.match.params.id, getPerson]);
 
   const handleInputChange = event => {
     const { name, value } = event.target;
-    setCurrentTutorial({ ...currentTutorial, [name]: value });
+    setCurrentPerson({ ...currentPerson, [name]: value });
   };
 
-  const updatePublished = status => {
-    var data = {
-      id: currentTutorial.id,
-      title: currentTutorial.title,
-      description: currentTutorial.description,
-      published: status
-    };
-
-    TutorialDataService.update(currentTutorial.id, data)
+  const updatePerson = () => {
+    TutorialDataService.update(currentPerson.id, currentPerson)
       .then(response => {
-        setCurrentTutorial({ ...currentTutorial, published: status });
         console.log(response.data);
-        setMessage("The status was updated successfully!");
+        setMessage("The person was updated successfully!");
       })
       .catch(e => {
         console.log(e);
       });
   };
 
-  const updateTutorial = () => {
-    TutorialDataService.update(currentTutorial.id, currentTutorial)
+  const deletePerson = () => {
+    TutorialDataService.remove(currentPerson.id)
       .then(response => {
         console.log(response.data);
-        setMessage("The tutorial was updated successfully!");
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
-  const deleteTutorial = () => {
-    TutorialDataService.remove(currentTutorial.id)
-      .then(response => {
-        console.log(response.data);
-        props.history.push("/tutorials");
+        props.history.push("/people");
       })
       .catch(e => {
         console.log(e);
@@ -74,65 +59,33 @@ const Tutorial = props => {
 
   return (
     <div>
-      {currentTutorial ? (
+      {currentPerson ? (
         <div className="edit-form">
-          <h4>Tutorial</h4>
+          <h4>Person</h4>
           <form>
-            <div className="form-group">
-              <label htmlFor="title">Title</label>
-              <input
-                type="text"
-                className="form-control"
-                id="title"
-                name="title"
-                value={currentTutorial.title}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="description">Description</label>
-              <input
-                type="text"
-                className="form-control"
-                id="description"
-                name="description"
-                value={currentTutorial.description}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>
-                <strong>Status:</strong>
-              </label>
-              {currentTutorial.published ? "Published" : "Pending"}
-            </div>
+            {["name", "job", "jobDescription", "height", "weight", "age"].map(field => (
+              <div key={field} className="form-group">
+                <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                <input
+                  type={field === "height" || field === "weight" || field === "age" ? "number" : "text"}
+                  className="form-control"
+                  id={field}
+                  name={field}
+                  value={currentPerson[field]}
+                  onChange={handleInputChange}
+                />
+              </div>
+            ))}
           </form>
 
-          {currentTutorial.published ? (
-            <button
-              className="badge badge-primary mr-2"
-              onClick={() => updatePublished(false)}
-            >
-              UnPublish
-            </button>
-          ) : (
-            <button
-              className="badge badge-primary mr-2"
-              onClick={() => updatePublished(true)}
-            >
-              Publish
-            </button>
-          )}
-
-          <button className="badge badge-danger mr-2" onClick={deleteTutorial}>
+          <button className="badge badge-danger mr-2" onClick={deletePerson}>
             Delete
           </button>
 
           <button
             type="submit"
             className="badge badge-success"
-            onClick={updateTutorial}
+            onClick={updatePerson}
           >
             Update
           </button>
@@ -141,11 +94,11 @@ const Tutorial = props => {
       ) : (
         <div>
           <br />
-          <p>Please click on a Tutorial...</p>
+          <p>Please click on a Person...</p>
         </div>
       )}
     </div>
   );
 };
 
-export default Tutorial;
+export default Person;

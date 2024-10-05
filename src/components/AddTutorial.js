@@ -1,34 +1,40 @@
 import React, { useState } from "react";
 import TutorialDataService from "../services/TutorialService";
 
-const AddTutorial = () => {
-  const initialTutorialState = {
+const AddPerson = () => {
+  const initialPersonState = {
     id: null,
-    title: "",
-    description: "",
-    published: false
+    name: "",
+    job: "",
+    jobDescription: "",
+    gender: false,
+    height: 0,
+    weight: 0,
+    age: 0,
   };
-  const [tutorial, setTutorial] = useState(initialTutorialState);
+  const [person, setPerson] = useState(initialPersonState);
   const [submitted, setSubmitted] = useState(false);
 
   const handleInputChange = event => {
     const { name, value } = event.target;
-    setTutorial({ ...tutorial, [name]: value });
+    setPerson({ ...person, [name]: value });
   };
 
-  const saveTutorial = () => {
-    var data = {
-      title: tutorial.title,
-      description: tutorial.description
+  const savePerson = () => {
+    const data = {
+      name: person.name,
+      job: person.job,
+      jobDescription: person.jobDescription,
+      gender: person.gender,
+      height: person.height,
+      weight: person.weight,
+      age: person.age,
     };
 
     TutorialDataService.create(data)
       .then(response => {
-        setTutorial({
-          id: response.data.id,
-          title: response.data.title,
-          description: response.data.description,
-          published: response.data.published
+        setPerson({
+          ...response.data,
         });
         setSubmitted(true);
         console.log(response.data);
@@ -38,8 +44,8 @@ const AddTutorial = () => {
       });
   };
 
-  const newTutorial = () => {
-    setTutorial(initialTutorialState);
+  const newPerson = () => {
+    setPerson(initialPersonState);
     setSubmitted(false);
   };
 
@@ -48,39 +54,27 @@ const AddTutorial = () => {
       {submitted ? (
         <div>
           <h4>You submitted successfully!</h4>
-          <button className="btn btn-success" onClick={newTutorial}>
+          <button className="btn btn-success" onClick={newPerson}>
             Add
           </button>
         </div>
       ) : (
         <div>
-          <div className="form-group">
-            <label htmlFor="title">Title</label>
-            <input
-              type="text"
-              className="form-control"
-              id="title"
-              required
-              value={tutorial.title}
-              onChange={handleInputChange}
-              name="title"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <input
-              type="text"
-              className="form-control"
-              id="description"
-              required
-              value={tutorial.description}
-              onChange={handleInputChange}
-              name="description"
-            />
-          </div>
-
-          <button onClick={saveTutorial} className="btn btn-success">
+          {["name", "job", "jobDescription", "height", "weight", "age"].map(field => (
+            <div key={field} className="form-group">
+              <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+              <input
+                type={field === "height" || field === "weight" || field === "age" ? "number" : "text"}
+                className="form-control"
+                id={field}
+                required
+                value={person[field]}
+                onChange={handleInputChange}
+                name={field}
+              />
+            </div>
+          ))}
+          <button onClick={savePerson} className="btn btn-success">
             Submit
           </button>
         </div>
@@ -89,4 +83,4 @@ const AddTutorial = () => {
   );
 };
 
-export default AddTutorial;
+export default AddPerson;

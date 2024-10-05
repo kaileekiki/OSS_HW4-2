@@ -1,41 +1,40 @@
 import http from "../http-common";
 
-const getAll = () => {
-  return http.get("/tutorials"); // 'api' 부분을 제거
-};
+class TutorialDataService {
+  // 모든 사람 목록을 가져오는 GET 요청
+  getAll() {
+    return http.get("/id");
+  }
 
-const get = (id) => {
-  return http.get(`/tutorials/${id}`); // 'api' 부분을 제거
-};
+  // 특정 사람을 가져오는 GET 요청
+  get(id) {
+    return http.get(`/id/${id}`);
+  }
 
-const create = (data) => {
-  return http.post("/tutorials", data); // 'api' 부분을 제거
-};
+  // 새로운 사람을 추가하는 POST 요청
+  create(data) {
+    return http.post("/id", data);
+  }
 
-const update = (id, data) => {
-  return http.put(`/tutorials/${id}`, data); // 'api' 부분을 제거
-};
+  // 특정 사람의 데이터를 업데이트하는 PUT 요청
+  update(id, data) {
+    return http.put(`/id/${id}`, data);
+  }
 
-const remove = (id) => {
-  return http.delete(`/tutorials/${id}`); // 'api' 부분을 제거
-};
+  // 특정 사람을 삭제하는 DELETE 요청
+  remove(id) {
+    return http.delete(`/id/${id}`);
+  }
 
-const removeAll = () => {
-  return http.delete(`/tutorials`); // 'api' 부분을 제거
-};
+  // 모든 사람을 삭제하는 DELETE 요청 (이 기능은 API에서 제공되지 않을 수도 있습니다)
+  removeAll() {
+    return http.delete(`/id`);
+  }
 
-const findByTitle = (title) => {
-  return http.get(`/tutorials?title=${title}`); // 'api' 부분을 제거
-};
+  // 이름을 기준으로 사람을 검색하는 GET 요청
+  findByName(name) {
+    return http.get(`/id?name=${name}`);
+  }
+}
 
-const TutorialService = {
-  getAll,
-  get,
-  create,
-  update,
-  remove,
-  removeAll,
-  findByTitle,
-};
-
-export default TutorialService;
+export default new TutorialDataService();
