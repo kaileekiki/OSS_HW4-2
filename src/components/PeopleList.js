@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import TutorialDataService from "../services/TutorialService";
 import { useTable } from "react-table";
+import { useHistory } from "react-router-dom";
 
-const PeopleList = (props) => {
+const PeopleList = () => {
   const [people, setPeople] = useState([]);
   const [searchName, setSearchName] = useState("");
   const peopleRef = useRef();
+  const history = useHistory(); // useHistory 훅을 사용하여 history 객체 가져오기
 
   peopleRef.current = people;
 
-  // 데이터를 가져오는 함수
   const retrievePeople = useCallback(() => {
     TutorialDataService.getAll()
       .then((response) => {
@@ -20,18 +21,15 @@ const PeopleList = (props) => {
       });
   }, []);
 
-  // 컴포넌트가 처음 렌더링될 때 데이터를 가져옵니다.
   useEffect(() => {
     retrievePeople();
   }, [retrievePeople]);
 
-  // 검색 입력 처리 함수
   const onChangeSearchName = (e) => {
     const searchName = e.target.value;
     setSearchName(searchName);
   };
 
-  // 특정 사람 삭제 함수
   const deletePerson = useCallback((rowIndex) => {
     const id = peopleRef.current[rowIndex].id;
 
@@ -46,7 +44,6 @@ const PeopleList = (props) => {
       });
   }, []);
 
-  // 테이블의 열 정의 및 의존성 배열 수정
   const columns = useMemo(
     () => [
       {
@@ -56,10 +53,6 @@ const PeopleList = (props) => {
       {
         Header: "Job",
         accessor: "job",
-      },
-      {
-        Header: "Job Description",
-        accessor: "jobDescription",
       },
       {
         Header: "Gender",
@@ -87,7 +80,7 @@ const PeopleList = (props) => {
           const rowIdx = props.row.id;
           return (
             <div>
-              <span onClick={() => props.history.push(`/people/${peopleRef.current[rowIdx].id}`)}>
+              <span onClick={() => history.push(`/people/${peopleRef.current[rowIdx].id}`)}> {/* useHistory로 가져온 history 사용 */}
                 <i className="far fa-edit action mr-2"></i>
               </span>
 
@@ -99,7 +92,7 @@ const PeopleList = (props) => {
         },
       },
     ],
-    [deletePerson] // props.history 제거
+    [deletePerson, history]
   );
 
   const {
@@ -128,7 +121,9 @@ const PeopleList = (props) => {
             <button
               className="btn btn-outline-secondary"
               type="button"
-              onClick={() => TutorialDataService.findByName(searchName).then((response) => setPeople(response.data))}
+              onClick={() =>
+                TutorialDataService.findByName(searchName).then((response) => setPeople(response.data))
+              }
             >
               Search
             </button>
@@ -157,9 +152,7 @@ const PeopleList = (props) => {
               return (
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                    );
+                    return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
                   })}
                 </tr>
               );

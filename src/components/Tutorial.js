@@ -1,91 +1,176 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import TutorialDataService from "../services/TutorialService";
+import { useHistory } from "react-router-dom";
 
-const Person = props => {
-  const initialPersonState = {
+const Tutorial = (props) => {
+  const history = useHistory(); // useHistory 훅 사용
+  const initialTutorialState = {
     id: null,
     name: "",
     job: "",
-    jobDescription: "",
-    gender: false,
-    height: 0,
-    weight: 0,
-    age: 0,
+    gender: 0,
+    height: "",
+    weight: "",
+    age: "",
   };
-  const [currentPerson, setCurrentPerson] = useState(initialPersonState);
+  const [currentTutorial, setCurrentTutorial] = useState(initialTutorialState);
   const [message, setMessage] = useState("");
 
-  const getPerson = useCallback(id => {
+  const getTutorial = (id) => {
     TutorialDataService.get(id)
-      .then(response => {
-        setCurrentPerson(response.data);
+      .then((response) => {
+        setCurrentTutorial(response.data);
         console.log(response.data);
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
-  }, []);
-
-  useEffect(() => {
-    getPerson(props.match.params.id);
-  }, [props.match.params.id, getPerson]);
-
-  const handleInputChange = event => {
-    const { name, value } = event.target;
-    setCurrentPerson({ ...currentPerson, [name]: value });
   };
 
-  const updatePerson = () => {
-    TutorialDataService.update(currentPerson.id, currentPerson)
-      .then(response => {
+  useEffect(() => {
+    getTutorial(props.match.params.id);
+  }, [props.match.params.id]);
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setCurrentTutorial({ ...currentTutorial, [name]: value });
+  };
+
+  const updatePublished = (status) => {
+    const data = {
+      ...currentTutorial,
+      published: status,
+    };
+
+    TutorialDataService.update(currentTutorial.id, data)
+      .then((response) => {
+        setCurrentTutorial({ ...currentTutorial, published: status });
+        console.log(response.data);
+        setMessage("The status was updated successfully!");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const updateTutorial = () => {
+    TutorialDataService.update(currentTutorial.id, currentTutorial)
+      .then((response) => {
         console.log(response.data);
         setMessage("The person was updated successfully!");
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   };
 
-  const deletePerson = () => {
-    TutorialDataService.remove(currentPerson.id)
-      .then(response => {
+  const deleteTutorial = () => {
+    TutorialDataService.remove(currentTutorial.id)
+      .then((response) => {
         console.log(response.data);
-        props.history.push("/people");
+        history.push("/people"); // 수정: history를 사용하여 페이지 이동
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   };
 
   return (
     <div>
-      {currentPerson ? (
+      {currentTutorial ? (
         <div className="edit-form">
-          <h4>Person</h4>
+          <h4>Edit Person</h4>
           <form>
-            {["name", "job", "jobDescription", "height", "weight", "age"].map(field => (
-              <div key={field} className="form-group">
-                <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-                <input
-                  type={field === "height" || field === "weight" || field === "age" ? "number" : "text"}
-                  className="form-control"
-                  id={field}
-                  name={field}
-                  value={currentPerson[field]}
-                  onChange={handleInputChange}
-                />
-              </div>
-            ))}
+            <div className="form-group">
+              <label htmlFor="name">Name</label>
+              <input
+                type="text"
+                className="form-control"
+                id="name"
+                name="name"
+                value={currentTutorial.name}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="job">Job</label>
+              <input
+                type="text"
+                className="form-control"
+                id="job"
+                name="job"
+                value={currentTutorial.job}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="gender">Gender</label>
+              <select
+                className="form-control"
+                id="gender"
+                name="gender"
+                value={currentTutorial.gender}
+                onChange={(e) =>
+                  setCurrentTutorial({
+                    ...currentTutorial,
+                    gender: parseInt(e.target.value),
+                  })
+                }
+              >
+                <option value={0}>Female</option>
+                <option value={1}>Male</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="height">Height</label>
+              <input
+                type="number"
+                className="form-control"
+                id="height"
+                name="height"
+                value={currentTutorial.height}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="weight">Weight</label>
+              <input
+                type="number"
+                className="form-control"
+                id="weight"
+                name="weight"
+                value={currentTutorial.weight}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="age">Age</label>
+              <input
+                type="number"
+                className="form-control"
+                id="age"
+                name="age"
+                value={currentTutorial.age}
+                onChange={handleInputChange}
+              />
+            </div>
           </form>
 
-          <button className="badge badge-danger mr-2" onClick={deletePerson}>
+          <button
+            className="badge badge-primary mr-2"
+            onClick={() => updatePublished(!currentTutorial.published)}
+          >
+            {currentTutorial.published ? "Unpublish" : "Publish"}
+          </button>
+
+          <button className="badge badge-danger mr-2" onClick={deleteTutorial}>
             Delete
           </button>
 
           <button
             type="submit"
             className="badge badge-success"
-            onClick={updatePerson}
+            onClick={updateTutorial}
           >
             Update
           </button>
@@ -101,4 +186,4 @@ const Person = props => {
   );
 };
 
-export default Person;
+export default Tutorial;

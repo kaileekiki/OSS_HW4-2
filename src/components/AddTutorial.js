@@ -1,51 +1,50 @@
 import React, { useState } from "react";
 import TutorialDataService from "../services/TutorialService";
+import { useHistory } from "react-router-dom";
 
-const AddPerson = () => {
-  const initialPersonState = {
+const AddTutorial = () => {
+  const history = useHistory();
+  const initialTutorialState = {
     id: null,
     name: "",
     job: "",
     jobDescription: "",
-    gender: false,
-    height: 0,
-    weight: 0,
-    age: 0,
+    gender: 0,
+    height: "",
+    weight: "",
+    age: "",
   };
-  const [person, setPerson] = useState(initialPersonState);
+  const [tutorial, setTutorial] = useState(initialTutorialState);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleInputChange = event => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setPerson({ ...person, [name]: value });
+    setTutorial({ ...tutorial, [name]: value });
   };
 
-  const savePerson = () => {
+  const saveTutorial = () => {
     const data = {
-      name: person.name,
-      job: person.job,
-      jobDescription: person.jobDescription,
-      gender: person.gender,
-      height: person.height,
-      weight: person.weight,
-      age: person.age,
+      name: tutorial.name,
+      job: tutorial.job,
+      jobDescription: tutorial.jobDescription,
+      gender: tutorial.gender,
+      height: tutorial.height,
+      weight: tutorial.weight,
+      age: tutorial.age,
     };
 
     TutorialDataService.create(data)
-      .then(response => {
-        setPerson({
-          ...response.data,
-        });
+      .then((response) => {
         setSubmitted(true);
         console.log(response.data);
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   };
 
-  const newPerson = () => {
-    setPerson(initialPersonState);
+  const newTutorial = () => {
+    setTutorial(initialTutorialState);
     setSubmitted(false);
   };
 
@@ -54,27 +53,96 @@ const AddPerson = () => {
       {submitted ? (
         <div>
           <h4>You submitted successfully!</h4>
-          <button className="btn btn-success" onClick={newPerson}>
+          <button className="btn btn-success" onClick={newTutorial}>
             Add
+          </button>
+          <button className="btn btn-primary" onClick={() => history.push("/")}>
+            Go Back to List
           </button>
         </div>
       ) : (
         <div>
-          {["name", "job", "jobDescription", "height", "weight", "age"].map(field => (
-            <div key={field} className="form-group">
-              <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-              <input
-                type={field === "height" || field === "weight" || field === "age" ? "number" : "text"}
-                className="form-control"
-                id={field}
-                required
-                value={person[field]}
-                onChange={handleInputChange}
-                name={field}
-              />
-            </div>
-          ))}
-          <button onClick={savePerson} className="btn btn-success">
+          <div className="form-group">
+            <label htmlFor="name">Name</label>
+            <input
+              type="text"
+              className="form-control"
+              id="name"
+              required
+              value={tutorial.name}
+              onChange={handleInputChange}
+              name="name"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="job">Job</label>
+            <input
+              type="text"
+              className="form-control"
+              id="job"
+              required
+              value={tutorial.job}
+              onChange={handleInputChange}
+              name="job"
+            />
+          </div>
+
+
+          <div className="form-group">
+            <label htmlFor="gender">Gender</label>
+            <select
+              className="form-control"
+              id="gender"
+              value={tutorial.gender}
+              onChange={(e) => setTutorial({ ...tutorial, gender: parseInt(e.target.value) })}
+              name="gender"
+            >
+              <option value={0}>Female</option>
+              <option value={1}>Male</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="height">Height</label>
+            <input
+              type="number"
+              className="form-control"
+              id="height"
+              required
+              value={tutorial.height}
+              onChange={handleInputChange}
+              name="height"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="weight">Weight</label>
+            <input
+              type="number"
+              className="form-control"
+              id="weight"
+              required
+              value={tutorial.weight}
+              onChange={handleInputChange}
+              name="weight"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="age">Age</label>
+            <input
+              type="number"
+              className="form-control"
+              id="age"
+              required
+              value={tutorial.age}
+              onChange={handleInputChange}
+              name="age"
+            />
+          </div>
+
+          <button onClick={saveTutorial} className="btn btn-success">
             Submit
           </button>
         </div>
@@ -83,4 +151,4 @@ const AddPerson = () => {
   );
 };
 
-export default AddPerson;
+export default AddTutorial;

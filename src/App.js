@@ -6,20 +6,20 @@ import "@fortawesome/fontawesome-free/js/all.js";
 import "./App.css";
 
 import AddTutorial from "./components/AddTutorial";
-import Tutorial from "./components/Tutorial";
-import TutorialsList from "./components/PeopleList";
+import EditPerson from "./components/EditPerson";
+import PeopleList from "./components/PeopleList";
 
 function App() {
   return (
     <div>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
-        <a href="/tutorials" className="navbar-brand">
+        <a href="/people" className="navbar-brand">
           bezKoder
         </a>
         <div className="navbar-nav mr-auto">
           <li className="nav-item">
-            <Link to={"/tutorials"} className="nav-link">
-              Tutorials
+            <Link to={"/people"} className="nav-link">
+              People
             </Link>
           </li>
           <li className="nav-item">
@@ -32,9 +32,9 @@ function App() {
 
       <div className="container mt-3">
         <Switch>
-          <Route exact path={["/", "/tutorials"]} component={TutorialsList} />
+          <Route exact path={["/", "/people"]} component={PeopleList} />
           <Route exact path="/add" component={AddTutorial} />
-          <Route path="/tutorials/:id" component={Tutorial} />
+          <Route path="/people/:id" component={EditPerson} />
         </Switch>
       </div>
     </div>
