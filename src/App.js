@@ -13,9 +13,9 @@ function App() {
   return (
     <div>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
-        <a className="navbar-brand">
+        <p3>
           22300593 이지광
-        </a>
+        </p3>
         <div className="navbar-nav mr-auto">
           <li className="nav-item">
             <Link to={"/people"} className="nav-link">
