@@ -9,15 +9,7 @@ const PeopleList = (props) => {
 
   peopleRef.current = people;
 
-  useEffect(() => {
-    retrievePeople();
-  }, []);
-
-  const onChangeSearchName = (e) => {
-    const searchName = e.target.value;
-    setSearchName(searchName);
-  };
-
+  // 데이터를 가져오는 함수
   const retrievePeople = useCallback(() => {
     TutorialDataService.getAll()
       .then((response) => {
@@ -28,23 +20,33 @@ const PeopleList = (props) => {
       });
   }, []);
 
+  // 컴포넌트가 처음 렌더링될 때 데이터를 가져옵니다.
+  useEffect(() => {
+    retrievePeople();
+  }, [retrievePeople]);
+
+  // 검색 입력 처리 함수
+  const onChangeSearchName = (e) => {
+    const searchName = e.target.value;
+    setSearchName(searchName);
+  };
+
+  // 특정 사람 삭제 함수
   const deletePerson = useCallback((rowIndex) => {
     const id = peopleRef.current[rowIndex].id;
 
     TutorialDataService.remove(id)
-      .then((response) => {
-        props.history.push("/people");
-
+      .then(() => {
         let newPeople = [...peopleRef.current];
         newPeople.splice(rowIndex, 1);
-
         setPeople(newPeople);
       })
       .catch((e) => {
         console.log(e);
       });
-  }, [props.history]);
+  }, []);
 
+  // 테이블의 열 정의 및 의존성 배열 수정
   const columns = useMemo(
     () => [
       {
@@ -97,7 +99,7 @@ const PeopleList = (props) => {
         },
       },
     ],
-    [deletePerson, props.history]
+    [deletePerson] // props.history 제거
   );
 
   const {

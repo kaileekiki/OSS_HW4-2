@@ -7,7 +7,7 @@ import "./App.css";
 
 import AddTutorial from "./components/AddTutorial";
 import Tutorial from "./components/Tutorial";
-import TutorialsList from "./components/TutorialsList";
+import TutorialsList from "./components/PeopleList";
 
 function App() {
   return (

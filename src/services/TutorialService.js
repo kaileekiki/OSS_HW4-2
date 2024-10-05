@@ -26,7 +26,7 @@ class TutorialDataService {
     return http.delete(`/id/${id}`);
   }
 
-  // 모든 사람을 삭제하는 DELETE 요청 (이 기능은 API에서 제공되지 않을 수도 있습니다)
+  // 모든 사람을 삭제하는 DELETE 요청
   removeAll() {
     return http.delete(`/id`);
   }
@@ -37,4 +37,6 @@ class TutorialDataService {
   }
 }
 
-export default new TutorialDataService();
+// 인스턴스를 생성한 후 내보냅니다.
+const tutorialDataService = new TutorialDataService();
+export default tutorialDataService;
