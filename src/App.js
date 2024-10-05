@@ -13,7 +13,7 @@ function App() {
   return (
     <div>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
-        <a href="/people" className="navbar-brand">
+        <a>
           22300593 이지광
         </a>
         <div className="navbar-nav mr-auto">
