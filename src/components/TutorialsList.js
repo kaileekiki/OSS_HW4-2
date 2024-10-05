@@ -112,7 +112,7 @@ const TutorialsList = (props) => {
         },
       },
     ],
-    []
+    [openTutorial, deleteTutorial] // 의존성 배열에 openTutorial 및 deleteTutorial 추가
   );
 
   const {
