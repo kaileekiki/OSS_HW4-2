@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import TutorialDataService from "../services/TutorialService";
 import { useTable } from "react-table";
 
@@ -53,13 +53,12 @@ const TutorialsList = (props) => {
       });
   };
 
-  const openTutorial = (rowIndex) => {
+  const openTutorial = useCallback((rowIndex) => {
     const id = tutorialsRef.current[rowIndex].id;
-
     props.history.push("/tutorials/" + id);
-  };
+  }, [props.history]);
 
-  const deleteTutorial = (rowIndex) => {
+  const deleteTutorial = useCallback((rowIndex) => {
     const id = tutorialsRef.current[rowIndex].id;
 
     TutorialDataService.remove(id)
@@ -74,7 +73,7 @@ const TutorialsList = (props) => {
       .catch((e) => {
         console.log(e);
       });
-  };
+  }, [props.history]);
 
   const columns = useMemo(
     () => [
@@ -112,7 +111,7 @@ const TutorialsList = (props) => {
         },
       },
     ],
-    [openTutorial, deleteTutorial] // 의존성 배열에 openTutorial 및 deleteTutorial 추가
+    [openTutorial, deleteTutorial]
   );
 
   const {
