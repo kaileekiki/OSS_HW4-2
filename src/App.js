@@ -13,9 +13,10 @@ function App() {
   return (
     <div>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
-        <p3>
-          22300593 이지광
-        </p3>
+      <p2 className="navbar-brand">
+        22300593 이지광
+      </p2>
+
         <div className="navbar-nav mr-auto">
           <li className="nav-item">
             <Link to={"/people"} className="nav-link">
