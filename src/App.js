@@ -38,6 +38,9 @@ function App() {
           <Route path="/people/:id" component={EditPerson} />
         </Switch>
       </div>
+      <nav className="navbar navbar-expand fixed-bottom custom-footer">
+        <p2 className="navbar-brand">People information app</p2>
+      </nav>
     </div>
   );
 }

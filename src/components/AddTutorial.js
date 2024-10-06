@@ -54,7 +54,7 @@ const AddTutorial = () => {
         <div>
           <h4>You submitted successfully!</h4>
           <button className="btn btn-success" onClick={newTutorial}>
-            Add
+            Add more
           </button>
           <button className="btn btn-primary" onClick={() => history.push("/")}>
             Go Back to List

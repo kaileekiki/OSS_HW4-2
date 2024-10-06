@@ -3,7 +3,7 @@ import TutorialDataService from "../services/TutorialService";
 import { useHistory } from "react-router-dom";
 
 const Tutorial = (props) => {
-  const history = useHistory(); // useHistory 훅 사용
+  const history = useHistory(); 
   const initialTutorialState = {
     id: null,
     name: "",
@@ -68,7 +68,7 @@ const Tutorial = (props) => {
     TutorialDataService.remove(currentTutorial.id)
       .then((response) => {
         console.log(response.data);
-        history.push("/people"); // 수정: history를 사용하여 페이지 이동
+        history.push("/people"); 
       })
       .catch((e) => {
         console.log(e);

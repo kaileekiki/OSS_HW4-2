@@ -7,7 +7,7 @@ const PeopleList = () => {
   const [people, setPeople] = useState([]);
   const [searchName, setSearchName] = useState("");
   const peopleRef = useRef();
-  const history = useHistory(); // useHistory 훅을 사용하여 history 객체 가져오기
+  const history = useHistory(); 
 
   peopleRef.current = people;
 
